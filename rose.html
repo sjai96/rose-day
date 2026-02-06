@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Happy Rose Day 🌹</title>
+
+<!-- WhatsApp / Social Preview -->
+<meta property="og:title" content="A Rose Just For You 🌹">
+<meta property="og:description" content="Tap to open your Rose Day surprise.">
+<!-- Replace this with your own hosted image URL (optional but recommended) -->
+<meta property="og:image" content="https://images.pexels.com/photos/6488084/pexels-photo-6488084.jpeg">
+<meta property="og:type" content="website">
+
+<style>
+    :root {
+        --bg1: #ff4d6d;
+        --bg2: #ff758f;
+        --glass: rgba(255,255,255,0.18);
+        --accent: #ffe3ec;
+        --btn-bg: #ffffff;
+        --btn-text: #ff4d6d;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background: linear-gradient(135deg, var(--bg1), var(--bg2));
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .overlay {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: radial-gradient(circle at top, rgba(255,255,255,0.15), transparent 60%);
+        padding: 16px;
+    }
+
+    .card {
+        background: var(--glass);
+        border-radius: 24px;
+        padding: 28px 22px;
+        max-width: 420px;
+        width: 100%;
+        backdrop-filter: blur(18px);
+        box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+        border: 1px solid rgba(255,255,255,0.3);
+        opacity: 0;
+        transform: translateY(24px) scale(0.98);
+        transition: opacity 0.7s ease, transform 0.7s ease;
+        display: none;
+    }
+
+    .card.visible {
+        display: block;
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    .rose-icon-big {
+        font-size: 3.2rem;
+        margin-bottom: 8px;
+    }
+
+    h1 {
+        font-size: 1.9rem;
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
+
+    .name-span {
+        color: var(--accent);
+        font-weight: 700;
+    }
+
+    p {
+        font-size: 1.05rem;
+        line-height: 1.6;
+        margin-bottom: 6px;
+    }
+
+    .note {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin-top: 10px;
+    }
+
+    .button-wrapper {
+        position: absolute;
+        bottom: 36px;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        pointer-events: none;
+    }
+
+    #open-btn {
+        pointer-events: auto;
+        border: none;
+        border-radius: 999px;
+        padding: 14px 26px;
+        font-size: 1.05rem;
+        font-weight: 600;
+        background: var(--btn-bg);
+        color: var(--btn-text);
+        box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    #open-btn span {
+        display: inline-block;
+    }
+
+    #open-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 14px 28px rgba(0,0,0,0.35);
+    }
+
+    #open-btn:active {
+        transform: translateY(1px) scale(0.97);
+        box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+    }
+
+    .petal {
+        position: fixed;
+        top: -10vh;
+        font-size: 1.6rem;
+        pointer-events: none;
+        animation-name: fall;
+        animation-timing-function: linear;
+        animation-iteration-count: 1;
+    }
+
+    @keyframes fall {
+        0% {
+            transform: translate3d(0, -10vh, 0) rotate(0deg);
+            opacity: 0;
+        }
+        10% {
+            opacity: 1;
+        }
+        100% {
+            transform: translate3d(var(--x-move, 0px), 110vh, 0) rotate(360deg);
+            opacity: 0;
+        }
+    }
+
+    .expired-message {
+        padding: 40px 24px;
+        max-width: 480px;
+        background: rgba(0,0,0,0.25);
+        border-radius: 20px;
+        box-shadow: 0 18px 40px rgba(0,0,0,0.4);
+    }
+
+    .expired-message h1 {
+        font-size: 1.8rem;
+        margin-bottom: 12px;
+    }
+
+    .expired-message p {
+        font-size: 1rem;
+        opacity: 0.9;
+    }
+
+    @media (max-width: 480px) {
+        h1 {
+            font-size: 1.7rem;
+        }
+        p {
+            font-size: 1rem;
+        }
+        .rose-icon-big {
+            font-size: 3rem;
+        }
+        #open-btn {
+            font-size: 1rem;
+            padding: 12px 23px;
+        }
+    }
+</style>
+
+<script>
+    // ---------- TEMPORARY PAGE AUTO-EXPIRY ----------
+    // Set the expiry date/time here (local time of server/visitor).
+    // Example: active until 8 Feb 2026 00:00
+    const EXPIRY_DATE = new Date("2026-02-08T00:00:00");
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const now = new Date();
+        if (now > EXPIRY_DATE) {
+            document.body.innerHTML = `
+                <div class="overlay">
+                    <div class="expired-message">
+                        <h1>This rose has quietly faded 🌹</h1>
+                        <p>But the feelings behind it were real, even if the page isn&#39;t anymore.</p>
+                    </div>
+                </div>
+            `;
+        }
+    });
+</script>
+</head>
+<body>
+
+<div class="overlay">
+    <!-- Main card -->
+    <div id="rose-card" class="card">
+        <div class="rose-icon-big">🌹</div>
+        <h1 id="headline">Happy Rose Day, Renu 🌹</h1>
+		<p id="line1">
+    This rose is for <span class="name-span" id="name-span">Love</span>,
+</p>
+<p id="line2">
+    for the way your smile feels like home,<br>
+    for the softness you leave behind in every moment,<br>
+    and for loving me unconditionally .
+</p>
+<p class="note">
+    Today isn’t about roses…<br>
+    it’s about how easily you’ve bloomed in my heart.
+</p>
+    </div>
+
+    <!-- Button at bottom -->
+    <div class="button-wrapper">
+        <button id="open-btn">
+            <span>Open your rose</span>
+            <span>🌹</span>
+        </button>
+    </div>
+</div>
+
+<!-- Background music: replace src with your own soft romantic MP3 URL -->
+<audio id="bg-music" preload="auto" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+    // ---------- Get name from URL & personalize ----------
+    function getNameFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        const name = params.get("name");
+        if (!name) return null;
+        return decodeURIComponent(name.replace(/\+/g, " ")).trim();
+    }
+
+    function personalize() {
+        const name = getNameFromURL();
+        const headline = document.getElementById("headline");
+        const nameSpan = document.getElementById("name-span");
+
+        if (name) {
+            headline.textContent = `Happy Rose Day, ${name} 🌹`;
+            nameSpan.textContent = name;
+        } else {
+            // default
+            headline.textContent = "Happy Rose Day 🌹";
+            nameSpan.textContent = "you";
+        }
+    }
+
+    // ---------- Falling rose animation ----------
+    let petalsInterval = null;
+
+    function createPetal() {
+        const petal = document.createElement("span");
+        petal.className = "petal";
+        petal.textContent = "🌹";
+
+        const startX = Math.random() * window.innerWidth;
+        const xMove = (Math.random() * 80) - 40; // -40px to +40px sway
+
+        petal.style.left = startX + "px";
+        petal.style.setProperty("--x-move", xMove + "px");
+        const duration = 6 + Math.random() * 4; // 6-10s
+        petal.style.animationDuration = duration + "s";
+
+        document.body.appendChild(petal);
+
+        setTimeout(() => {
+            petal.remove();
+        }, duration * 1000 + 1000);
+    }
+
+    function startPetals() {
+        if (petalsInterval) return;
+        // Drop one immediately, then keep dropping
+        createPetal();
+        petalsInterval = setInterval(createPetal, 800);
+    }
+
+    // ---------- Button: reveal card + play music + start petals ----------
+    function setupOpenButton() {
+        const openBtn = document.getElementById("open-btn");
+        const card = document.getElementById("rose-card");
+        const music = document.getElementById("bg-music");
+
+        if (!openBtn) return;
+
+        openBtn.addEventListener("click", () => {
+            // Show the card
+            card.classList.add("visible");
+
+            // Start petals
+            startPetals();
+
+            // Try to play music (mobile requires user interaction, which we have)
+            if (music && music.play) {
+                music.play().catch(() => {
+                    // If autoplay fails, we stay silent gracefully
+                    console.log("Music could not autoplay, user may need to tap again.");
+                });
+            }
+
+            // Optionally, disable the button after first click
+            openBtn.disabled = true;
+            openBtn.style.opacity = "0.85";
+        });
+    }
+
+    // ---------- Initialize on DOM ready (after expiry check) ----------
+    document.addEventListener("DOMContentLoaded", () => {
+        personalize();
+        setupOpenButton();
+    });
+</script>
+
+</body>
+</html>
