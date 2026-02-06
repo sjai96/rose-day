@@ -16,7 +16,7 @@
 <style>
     :root {
         --bg1: #ff4d6d;
-        --bg2: #ff758f;
+        --bg2: #ffffff;
         --glass: rgba(255,255,255,0.18);
         --accent: #ffe3ec;
         --btn-bg: #ffffff;
@@ -260,28 +260,7 @@
 
 <script>
     // ---------- Get name from URL & personalize ----------
-    function getNameFromURL() {
-        const params = new URLSearchParams(window.location.search);
-        const name = params.get("name");
-        if (!name) return null;
-        return decodeURIComponent(name.replace(/\+/g, " ")).trim();
-    }
-
-    function personalize() {
-        const name = getNameFromURL();
-        const headline = document.getElementById("headline");
-        const nameSpan = document.getElementById("name-span");
-
-        if (name) {
-            headline.textContent = `Happy Rose Day, ${name} 🌹`;
-            nameSpan.textContent = name;
-        } else {
-            // default
-            headline.textContent = "Happy Rose Day 🌹";
-            nameSpan.textContent = "you";
-        }
-    }
-
+    
     // ---------- Falling rose animation ----------
     let petalsInterval = null;
 
@@ -349,11 +328,12 @@ setTimeout(() => {
 
     // ---------- Initialize on DOM ready (after expiry check) ----------
     document.addEventListener("DOMContentLoaded", () => {
-        personalize();
+        
         setupOpenButton();
     });
 </script>
 
 </body>
 </html>
+
 
