@@ -18,7 +18,7 @@
         --bg1: #ff4d6d;
         --bg2: #ffffff;
         --glass: rgba(255,255,255,0.18);
-        --accent: #ffe3ec;
+        --accent: #fa578c;
         --btn-bg: #ffffff;
         --btn-text: #ff4d6d;
     }
@@ -231,7 +231,7 @@
         <div class="rose-icon-big">🌹</div>
         <h1 id="headline">Happy Rose Day, Renu 🌹</h1>
 		<p id="line1">
-    This rose is for <span class="name-span" id="name-span">Love</span>,
+    This rose is for you my <span class="name-span" id="name-span">Love</span>,
 </p>
 <p id="line2">
     for the way your smile feels like home,<br>
@@ -284,13 +284,31 @@
         }, duration * 1000 + 1000);
     }
 
-    function startPetals() {
-        if (petalsInterval) return;
-        // Drop one immediately, then keep dropping
-        createPetal();
-        petalsInterval = setInterval(createPetal, 800);
+ function startPetals() {
+    if (petalsInterval) return;
+
+    // Initial burst
+    for (let i = 0; i < 6; i++) {
+        setTimeout(createPetal, i * 120);
     }
 
+    // Continuous heavier fall
+    petalsInterval = setInterval(() => {
+    for (let i = 0; i < 3; i++) {
+        createPetal();
+    }
+}, 400);
+}
+function burstPetalsOnce() {
+    // One-time burst when the page opens
+    const count = 20; // number of petals in the burst
+
+    for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+            createPetal();
+        }, i * 80); // 80ms gap gives a quick, pretty burst
+    }
+}
     // ---------- Button: reveal card + play music + start petals ----------
     function setupOpenButton() {
         const openBtn = document.getElementById("open-btn");
@@ -328,12 +346,13 @@ setTimeout(() => {
 
     // ---------- Initialize on DOM ready (after expiry check) ----------
     document.addEventListener("DOMContentLoaded", () => {
-        
+         burstPetalsOnce();
         setupOpenButton();
     });
 </script>
 
 </body>
 </html>
+
 
 
